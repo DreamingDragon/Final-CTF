@@ -10,12 +10,9 @@ echo "Found interface on $ETH."
 
 $sudo iptables --flush 
 #Ignores all udp and icmp traffic  
-$sudo iptables -A INPUT -i eth4 -p udp -j DROP  
-$sudo iptables -A INPUT -i eth2 -p udp -j DROP  
+$sudo iptables -A INPUT -i $ETH -p udp -j DROP    
 $sudo iptables -A INPUT -i $ETH -p icmp -j DROP  
-$sudo iptables -A OUTPUT -o eth4 -p udp -j DROP  
-$sudo iptables -A OUTPUT -o eth2 -p udp -j DROP  
-#$sudo iptables -A OUTPUT -o $ETH -p udp -j DROP  
+$sudo iptables -A OUTPUT -o $ETH -p udp -j DROP 
 #Blocks null packets  
 $sudo iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP  
 #Blocks XMAS packets  
@@ -27,7 +24,7 @@ $sudo iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 #Block new packets that are not syn  
 $sudo iptables -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j DROP  
 #block teardrop  
-$sudo iptables -A INPUT -p UDP -f -j DROP  
+$sudo iptables -A INPUT -p UDP -f -j DROP
 $sudo iptables -A OUTPUT -p UDP -f -j DROP  
 $sudo iptables -A INPUT -p UDP -m length --length 1500 -j DROP  
 $sudo iptables -A INPUT -p UDP -m length --length 58 -j DROP  
@@ -42,14 +39,9 @@ $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,RST FIN,RST -j DRO
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,ACK FIN -j DROP 
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ACK,URG URG -j DROP 
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ACK,FIN FIN -j DROP 
-$sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ACK,PSH PSH -j DROP 
-#$sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags SYN,ACK -j DROP  
-#$sudo iptables -A INPUT -i eth4 -p tcp --tcp-flags SYN ACK -j DROP  
-#$sudo iptables -A INPUT -i eth2 -p tcp --tcp-flags SYN ACK -j DROP  
-#$sudo iptables -A INPUT -i eth4 -p tcp --tcp-flags SYN ACK -j DROP  
-#$sudo iptables -A INPUT -i eth2 -p tcp --tcp-flags SYN ACK -j DROP  
+$sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ACK,PSH PSH -j DROP  
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL ALL -j DROP  
-$sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL NONE -j DROP  
+$sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL NONE -j DROP
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP  
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP  
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP  
@@ -68,7 +60,7 @@ $sudo iptables -A INPUT -p tcp --dport 443 -m limit --limit 2/s -j ACCEPT
 $sudo iptables -A INPUT -s client1 -i $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT  
 $sudo iptables -A INPUT -s client1 -i $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT  
 $sudo iptables -A INPUT -s client1 -i $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT  
-$sudo iptables -A   OUTPUT -d client1 -o $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT  
+$sudo iptables -A OUTPUT -d client1 -o $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT  
 $sudo iptables -A OUTPUT -d client1 -o $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT  
 $sudo iptables -A OUTPUT -d client1 -o $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT  
 $sudo iptables -A INPUT -s client2 -i $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT  
@@ -101,4 +93,4 @@ $sudo iptables -A OUTPUT -d server -o $ETH -m state --state RELATED,ESTABLISHED 
 #Passively ignore all other traffic  
 $sudo iptables -A INPUT -i $ETH -j DROP  
 $sudo iptables -A OUTPUT -o $ETH -j DROP  
-echo "Firewall Active!!!"
+echo "Firewall in place."
